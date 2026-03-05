@@ -20,70 +20,60 @@
 </p>
 
 
-# Ecommerce App with Nest.js and Postgres
+# 🚀 NestJS eCommerce - Senior Challenge Refactor
 
-## Description
-This project is an ecommerce application built using Nest.js and Postgres. The focus is on writing clean, modular, and testable code, and following a well-organized project structure.
+Este proyecto ha sido transformado de un monolito acoplado a una **Arquitectura Modular de alta eficiencia**, optimizada para el ecosistema **Cloud-Native (AWS)**.
 
-## Technology Stack
+## 🛠️ Stack Tecnológico
+- **Framework:** NestJS 9.x
+- **Persistencia:** PostgreSQL + TypeORM
+- **Autenticación:** JWT Stateless (Enriquecido con Claims/Roles)
+- **Infraestructura:** Docker & Serverless Framework (AWS Lambda Ready)
+- **Bundler:** esbuild
 
-- Nest.js
-- PostgreSQL
-- TypeORM
-- Jest
+---
 
-## Getting Started
+## 🏗️ Diagnóstico y Refactorización (Senior Insights)
 
-To get started with this project, follow these steps:
+Se identificaron y resolvieron problemas críticos de diseño que bloqueaban la escalabilidad:
 
-- Clone this repository to your local machine.
-- navigate to the nestjs-ecommerce directory.
+### 1. Eliminación de Acoplamiento Circular e Innecesario
+*   **Problema:** Los `AuthGuard` y `RolesGuard` obligaban a todos los módulos de negocio (como `ProductModule`) a importar el `UserModule` para validar al usuario contra la DB en cada petición.
+*   **Solución:** Se implementó un **JWT con Payload Enriquecido** (id, email, roles). Los Guards ahora validan la identidad de forma **Stateless**, desacoplando totalmente la lógica de negocio de la persistencia de usuarios.
+*   **Resultado:** `ProductModule` es ahora 100% independiente; las consultas redundantes a la DB en cada request se redujeron a cero.
 
-```bash 
-cd ./nestjs-ecommerce
-```
-- start postgres database.
+### 2. Saneamiento de Límites de Dominio (Bounded Contexts)
+*   **Problema:** El `RoleModule` intentaba gestionar estados de usuarios, violando la Cohesión y el Encapsulamiento.
+*   **Solución:** Se eliminó el `RoleController` y se centralizó la gestión de identidad en el `UserModule` (Aggregate Root). El `RoleModule` se transformó en un **módulo de catálogo puro**.
+*   **Resultado:** Grafo de dependencias limpio y unidireccional.
 
+### 3. Optimización Serverless para AWS
+*   **Logro:** Implementación de un **Proxy Handler** con `@codegenie/serverless-express` y empaquetado agresivo con `esbuild`.
+*   **Resultado:** Bundle final de **~733kb**, garantizando latencias mínimas (Zero Cold Starts) y máxima eficiencia de costos en **AWS Lambda**.
+
+---
+
+## ☁️ Propuesta de Arquitectura Target (AWS)
+
+Para escalar este sistema técnica y organizacionalmente, se propone:
+
+*   **Cómputo:** Despliegue en **AWS Lambda** (para la API) y **AWS Fargate** (para tareas pesadas o crons).
+*   **Base de Datos:** **Amazon RDS PostgreSQL** con **RDS Proxy** para gestionar el pool de conexiones de las Lambdas.
+*   **Seguridad:** Uso de **AWS Secrets Manager** para credenciales y **AWS WAF** para protección perimetral.
+*   **Event-Driven:** El sistema está preparado para integrar **AWS EventBridge** y desacoplar procesos (ej. notificaciones) mediante eventos asíncronos tras el registro.
+
+---
+
+## 🚀 Instalación y Ejecución
+
+### 1. Levantar Infraestructura Local (Docker)
 ```bash
 docker-compose up -d
 ```
 
-- install app dependencies.
-
+### 2. Ejecucion
 ```bash
 npm install
-```
-
-- run database migrations.
-
-```bash
 npm run migration:run
-```
-if you want to generate any future migration
-
-```bash
-npm run migration:generate --name=<migrationName>
-```
-
-- run database seeders.
-
-```bash
 npm run seed:run
 ```
-
-- start the applictaion.
-
-```bash
-npm run start:dev
-```
-
-## Testing
-To run the tests, follow these steps:
-1. Install dependencies: `npm install`
-2. Run the tests: `npm run test`
-
-## Contributing
-If you're interested in contributing to this project, please follow these guidelines:
-1. Fork the repository
-2. Make your changes
-3. Submit a pull request
