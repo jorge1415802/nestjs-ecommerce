@@ -20,7 +20,7 @@
 </p>
 
 
-# 🚀 NestJS eCommerce - Senior Challenge Refactor
+# 🚀 NestJS eCommerce
 
 Este proyecto ha sido transformado de un monolito acoplado a una **Arquitectura Modular de alta eficiencia**, optimizada para el ecosistema **Cloud-Native (AWS)**.
 
@@ -33,7 +33,7 @@ Este proyecto ha sido transformado de un monolito acoplado a una **Arquitectura 
 
 ---
 
-## 🏗️ Diagnóstico y Refactorización (Senior Insights)
+## 🏗️ Diagnóstico y Refactorización
 
 Se identificaron y resolvieron problemas críticos de diseño que bloqueaban la escalabilidad:
 
