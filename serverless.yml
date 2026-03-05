@@ -1,0 +1,60 @@
+service: nestjs-ecommerce
+
+plugins:
+  - serverless-esbuild
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage,'dev'}
+  region: us-east-1
+  environment:
+    NODE_ENV: ${self:custom.stages.${self:provider.stage}.nodeEnv}
+
+functions: ${file(./serverless/functions.yml)}
+
+package:
+  individually: true
+  patterns:
+    - '!**'
+    - 'package.json'
+    - 'dist/**'
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+  stages:
+    dev:
+      nodeEnv: "development"
+    staging:
+      nodeEnv: "staging"
+    prod:
+      nodeEnv: "production"
+  esbuild:
+    bundle: true
+    minify: false
+    platform: 'node'
+    target: 'node20'
+    keepNames: true
+    tsconfig: 'tsconfig.json'
+    external:
+      - '@aws-sdk/*'
+      - 'class-transformer'
+      - 'class-validator'
+      - '@nestjs/microservices'
+      - '@nestjs/websockets'
+      - '@nestjs/websockets/socket-module'
+      - '@grpc/grpc-js'
+      - '@grpc/proto-loader'
+      - 'kafkajs'
+      - 'mqtt'
+      - 'amqplib'
+      - 'amqp-connection-manager'
+      - 'redis'
+      - 'ioredis'
+      - 'nats'
+      - 'cache-manager'
+    exclude: 
+      - '*'
+    nativeZip: true

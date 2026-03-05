@@ -1,0 +1,4 @@
+main:
+  handler: src/lambdas/api.handler
+  events:
+    - http: { method: any, path: '/{proxy+}' }
